@@ -1,0 +1,48 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "images"
+
+collections:
+  - name: "blog"
+    label: "Blog Makaleleri"
+    folder: "_blog"
+    create: true
+    fields:
+      - {label: "Başlık", name: "title", widget: "string"}
+      - {label: "Tarih", name: "date", widget: "datetime"}
+      - {label: "Kategori", name: "category", widget: "select", options: ["Kilise Tarihi", "Sistematik Teoloji", "Reformasyon", "Pastoral", "Ekümenik"]}
+      - {label: "Özet", name: "excerpt", widget: "text"}
+      - {label: "İçerik", name: "body", widget: "markdown"}
+
+  - name: "podcast"
+    label: "Podcast Bölümleri"
+    folder: "_podcast"
+    create: true
+    fields:
+      - {label: "Başlık", name: "title", widget: "string"}
+      - {label: "Bölüm No", name: "episode", widget: "number"}
+      - {label: "Tarih", name: "date", widget: "datetime"}
+      - {label: "Süre", name: "duration", widget: "string"}
+      - {label: "Açıklama", name: "description", widget: "text"}
+
+  - name: "vaazlar"
+    label: "Vaazlar"
+    folder: "_vaazlar"
+    create: true
+    fields:
+      - {label: "Başlık", name: "title", widget: "string"}
+      - {label: "Tarih", name: "date", widget: "datetime"}
+      - {label: "Seri", name: "series", widget: "string"}
+      - {label: "Ayet", name: "verse", widget: "string"}
+      - {label: "Açıklama", name: "description", widget: "text"}
+
+  - name: "gunluk"
+    label: "Günlük"
+    folder: "_gunluk"
+    create: true
+    fields:
+      - {label: "Başlık", name: "title", widget: "string"}
+      - {label: "Tarih", name: "date", widget: "datetime"}
+      - {label: "İçerik", name: "body", widget: "markdown"}
