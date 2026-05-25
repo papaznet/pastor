@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PapazNet — Dijital Kürsü & Teoloji Arşivi</title>
+  <meta name="description" content="Türkçe konuşanlar için kilise tarihi, sistematik teoloji, vaazlar, podcast ve pastoral rehberlik arşivi." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --parchment:    #f2ead8;
+      --parchment-2:  #e8ddc4;
+      --parchment-3:  #d9ccb0;
+      --ink:          #1c1710;
+      --ink-2:        #3d3628;
+      --ink-3:        #7a6f5a;
+      --ink-4:        #a89d88;
+      --crimson:      #6b1a1a;
+      --crimson-pale: #f5e6e6;
+      --gold:         #8a6a1f;
+      --gold-light:   #c4973a;
+      --gold-pale:    #f5e9cc;
+      --onyx:         #0e0c09;
+
+      --display: 'IM Fell English', Georgia, serif;
+      --serif:   'Cormorant Garamond', Georgia, serif;
+      --sans:    'Jost', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      background: var(--parchment);
+      color: var(--ink);
+      font-family: var(--serif);
+      font-weight: 300;
+      line-height: 1.75;
+      min-height: 100vh;
+    }
+
+    /* ── GRAIN TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 9999;
+      pointer-events: none;
+      opacity: .028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
+
+    /* ── NAVIGATION ── */
+    nav {
+      position: sticky; top: 0; z-index: 200;
+      background: var(--onyx);
+      border-bottom: 1px solid rgba(196,151,58,.25);
+      padding: 0 clamp(1.5rem, 5vw, 5rem);
+      display: flex; align-items: center; justify-content: space-between;
+      height: 58px;
+    }
+
+    .nav-logo {
+      font-family: var(--display);
+      font-size: 19px; letter-spacing: .5px;
+      color: var(--parchment);
+      text-decoration: none;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .nav-logo .cross-glyph { color: var(--gold-light); font-size: 14px; }
+
+    .nav-center { display: flex; align-items: center; gap: 0; }
+    .nav-center a {
+      font-family: var(--sans); font-size: 12px; font-weight: 400;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: rgba(242,234,216,.55); text-decoration: none;
+      padding: 0 16px; height: 58px;
+      display: flex; align-items: center;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+    }
+    .nav-center a:hover, .nav-center a.active {
+      color: var(--gold-light);
+      border-bottom-color: var(--gold-light);
+    }
+
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .nav-subscribe {
+      font-family: var(--sans); font-size: 12px; font-weight: 500;
+      letter-spacing: .8px; text-transform: uppercase;
+      background: var(--crimson); color: var(--parchment);
+      border: none; padding: 8px 18px; border-radius: 2px;
+      cursor: pointer; text-decoration: none;
+      transition: background .2s;
+    }
+    .nav-subscribe:hover { background: #8b2020; }
+
+    .hamburger { display: none; background: none; border: none; cursor: pointer; gap: 5px; flex-direction: column; }
+    .hamburger span { display: block; width: 20px; height: 1px; background: var(--parchment); }
+
+    /* ── SECTION WRAPPERS ── */
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+
+    /* ─────────────────────────────────────────
+       ANASAYFA
+    ───────────────────────────────────────── */
+
+    /* HERO */
+    .hero {
+      position: relative; overflow: hidden;
+      min-height: 92vh;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: clamp(3rem, 8vw, 7rem) clamp(1.5rem, 5vw, 5rem);
+      background: var(--onyx);
+    }
+
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 60% 40%, rgba(107,26,26,.18) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 50% at 20% 80%, rgba(138,106,31,.12) 0%, transparent 60%);
+    }
+
+    .hero-ornament {
+      position: absolute; top: 50%; right: 5%;
+      transform: translateY(-50%);
+      font-family: var(--display); font-size: clamp(200px, 28vw, 420px);
+      color: rgba(242,234,216,.03); line-height: 1;
+      user-select: none; pointer-events: none;
+    }
+
+    .hero-rule {
+      width: 48px; height: 1px;
+      background: var(--gold-light);
+      margin-bottom: 2rem;
+      animation: expandRule .8s .2s ease both;
+    }
+    @keyframes expandRule { from { width: 0; } to { width: 48px; } }
+
+    .hero-eyebrow {
+      font-family: var(--sans); font-size: 11px; font-weight: 400;
+      letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--gold-light); margin-bottom: 1.5rem;
+      animation: fadeUp .7s .1s both;
+    }
+
+    .hero h1 {
+      font-family: var(--display);
+      font-size: clamp(36px, 6vw, 88px);
+      font-weight: 400; line-height: 1.05;
+      color: var(--parchment);
+      max-width: 760px;
+      margin-bottom: 1.75rem;
+      letter-spacing: -0.5px;
+      animation: fadeUp .7s .25s both;
+    }
+    .hero h1 em { font-style: italic; color: var(--gold-light); }
+
+    .hero-sub {
+      font-family: var(--serif); font-size: clamp(16px, 2vw, 20px);
+      font-weight: 300; font-style: italic;
+      color: rgba(242,234,216,.6);
+      max-width: 500px; line-height: 1.7;
+      margin-bottom: 3rem;
+      animation: fadeUp .7s .4s both;
+    }
+
+    .hero-actions {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      animation: fadeUp .7s .55s both;
+    }
+
+    .btn-parchment {
+      font-family: var(--sans); font-size: 12px; font-weight: 500;
+      letter-spacing: 1px; text-transform: uppercase;
+      background: var(--parchment); color: var(--onyx);
+      border: none; padding: 13px 28px; border-radius: 2px;
+      cursor: pointer; text-decoration: none;
+      transition: background .2s, transform .15s;
+      display: inline-block;
+    }
+    .btn-parchment:hover { background: var(--parchment-2); transform: translateY(-1px); }
+
+    .btn-ghost {
+      font-family: var(--sans); font-size: 12px; font-weight: 400;
+      letter-spacing: 1px; text-transform: uppercase;
+      background: transparent; color: rgba(242,234,216,.7);
+      border: 1px solid rgba(242,234,216,.2); padding: 13px 28px; border-radius: 2px;
+      cursor: pointer; text-decoration: none;
+      transition: border-color .2s, color .2s, transform .15s;
+      display: inline-block;
+    }
+    .btn-ghost:hover { border-color: var(--gold-light); color: var(--gold-light); transform: translateY(-1px); }
+
+    .hero-scroll-hint {
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      font-family: var(--sans); font-size: 10px; letter-spacing: 2px;
+      text-transform: uppercase; color: rgba(242,234,216,.25);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      animation: fadeIn 1s 1.2s both;
+    }
+    .scroll-line { width: 1px; height: 32px; background: rgba(196,151,58,.3); animation: scrollPulse 2s infinite; }
+    @keyframes scrollPulse { 0%,100%{opacity:.3} 50%{opacity:1} }
+
+    /* KOLEKSIYONLAR */
+    .collections {
+      padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 5vw, 5rem);
+      background: var(--parchment);
+    }
+
+    .collections-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: 3rem; gap: 2rem;
+    }
+
+    .eyebrow {
+      font-family: var(--sans); font-size: 10px; font-weight: 500;
+      letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--crimson); display: block; margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-family: var(--display);
+      font-size: clamp(26px, 3.5vw, 42px);
+      font-weight: 400; line-height: 1.15;
+      color: var(--ink); letter-spacing: -.3px;
+    }
+
+    .see-all {
+      font-family: var(--sans); font-size: 11px; font-weight: 500;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      color: var(--gold); text-decoration: none;
+      border-bottom: 1px solid var(--gold);
+      padding-bottom: 2px; white-space: nowrap;
+      transition: color .2s;
+    }
+    .see-all:hover { color: var(--crimson); border-color: var(--crimson); }
+
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1px; background: var(--parchment-3);
+      border: 1px solid var(--parchment-3);
+    }
+
+    .collection-card {
+      background: var(--parchment);
+      padding: 2.25rem 1.75rem;
+      text-decoration: none; color: var(--ink);
+      display: block; cursor: pointer;
+      transition: background .2s;
+      position: relative; overflow: hidden;
+    }
+    .collection-card::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px; background: var(--crimson);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .3s;
+    }
+    .collection-card:hover { background: var(--parchment-2); }
+    .collection-card:hover::after { transform: scaleX(1); }
+
+    .col-glyph {
+      font-size: 32px; margin-bottom: 1rem;
+      display: block; line-height: 1;
+    }
+    .col-name {
+      font-family: var(--display);
+      font-size: 19px; font-weight: 400;
+      color: var(--ink); margin-bottom: 6px;
+      display: block;
+    }
+    .col-count {
+      font-family: var(--sans); font-size: 11px;
+      color: var(--ink-4); letter-spacing: .5px;
+    }
+
+    /* SON IÇERIK ── MANASTIR ARŞIV LISTESI */
+    .recent-section {
+      padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 5rem);
+      background: var(--onyx);
+    }
+
+    .recent-section .eyebrow { color: var(--gold-light); }
+    .recent-section .section-title { color: var(--parchment); }
+
+    .archive-list { margin-top: 2.5rem; }
+
+    .archive-item {
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      gap: 2rem; align-items: start;
+      padding: 1.75rem 0;
+      border-bottom: 1px solid rgba(242,234,216,.08);
+      text-decoration: none; color: inherit;
+      transition: background .15s;
+      cursor: pointer;
+    }
+    .archive-item:first-child { border-top: 1px solid rgba(242,234,216,.08); }
+    .archive-item:hover .archive-title { color: var(--gold-light); }
+
+    .archive-num {
+      font-family: var(--display); font-size: 42px; font-weight: 400;
+      color: rgba(242,234,216,.08); line-height: 1; padding-top: 2px;
+      text-align: right; letter-spacing: -1px;
+    }
+
+    .archive-meta-top {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+    }
+    .archive-type {
+      font-family: var(--sans); font-size: 9px; font-weight: 500;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 1px;
+    }
+    .type-makale { background: rgba(107,26,26,.4); color: #f0b0b0; }
+    .type-podcast { background: rgba(138,106,31,.3); color: var(--gold-light); }
+    .type-vaaz { background: rgba(30,80,120,.35); color: #9bbfe0; }
+    .type-gunluk { background: rgba(50,70,40,.4); color: #aacca0; }
+
+    .archive-date {
+      font-family: var(--sans); font-size: 11px;
+      color: rgba(242,234,216,.3); letter-spacing: .3px;
+    }
+
+    .archive-title {
+      font-family: var(--serif); font-size: 20px; font-weight: 400;
+      color: rgba(242,234,216,.88); line-height: 1.35;
+      margin-bottom: 6px;
+      transition: color .2s;
+    }
+
+    .archive-excerpt {
+      font-family: var(--serif); font-size: 13px; font-style: italic;
+      color: rgba(242,234,216,.35); line-height: 1.6;
+    }
+
+    .archive-read {
+      font-family: var(--sans); font-size: 10px; font-weight: 500;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      color: rgba(242,234,216,.25);
+      white-space: nowrap; padding-top: 4px;
+      transition: color .2s;
+    }
+    .archive-item:hover .archive-read { color: var(--gold-light); }
+
+    /* INSTAGRAM AKISI */
+    .instagram-section {
+      padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 5rem);
+      background: var(--parchment-2);
+      border-top: 1px solid var(--parchment-3);
+    }
+
+    .insta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 3px; margin-top: 2rem;
+    }
+
+    .insta-card {
+      aspect-ratio: 1; background: var(--parchment-3);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden; cursor: pointer;
+      transition: opacity .2s;
+    }
+    .insta-card:hover { opacity: .85; }
+    .insta-card:hover .insta-overlay { opacity: 1; }
+
+    .insta-placeholder {
+      font-size: 36px; opacity: .35;
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 100%; background: var(--parchment-3);
+      flex-direction: column; gap: 6px;
+    }
+    .insta-placeholder span {
+      font-family: var(--sans); font-size: 9px;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--ink-4);
+    }
+
+    .insta-overlay {
+      position: absolute; inset: 0;
+      background: rgba(14,12,9,.75);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity .25s;
+      padding: 12px;
+      text-align: center;
+    }
+    .insta-overlay p {
+      font-family: var(--serif); font-size: 12px;
+      font-style: italic; color: var(--parchment);
+      line-height: 1.5;
+    }
+
+    .insta-connect-banner {
+      margin-top: 1.5rem; padding: 1.25rem 1.5rem;
+      background: white; border: 1px solid var(--parchment-3);
+      border-radius: 3px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap;
+    }
+    .insta-connect-banner p {
+      font-family: var(--sans); font-size: 13px;
+      color: var(--ink-3); line-height: 1.5;
+    }
+    .insta-connect-banner strong { color: var(--ink); font-weight: 500; }
+    .btn-insta {
+      font-family: var(--sans); font-size: 12px; font-weight: 500;
+      letter-spacing: .8px; text-transform: uppercase;
+      background: var(--onyx); color: var(--parchment);
+      border: none; padding: 10px 20px; border-radius: 2px;
+      cursor: pointer; white-space: nowrap; text-decoration: none;
+      transition: background .2s; display: inline-block;
+    }
+    .btn-insta:hover { background: #2d2820; }
+
+    /* MAIL LİSTESİ CTA */
+    .email-cta {
+      padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 5vw, 5rem);
+      background: var(--crimson);
+      position: relative; overflow: hidden;
+      text-align: center;
+    }
+    .email-cta::before {
+      content: '✉';
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: clamp(200px, 35vw, 500px);
+      color: rgba(255,255,255,.03);
+      pointer-events: none; line-height: 1;
+    }
+
+    .email-cta .eyebrow { color: rgba(245,233,204,.65); margin-bottom: 1rem; }
+
+    .email-cta h2 {
+      font-family: var(--display);
+      font-size: clamp(28px, 4.5vw, 58px);
+      font-weight: 400; color: var(--parchment);
+      line-height: 1.15; margin-bottom: 1rem;
+      letter-spacing: -.3px;
+    }
+
+    .email-cta p {
+      font-family: var(--serif); font-size: 17px;
+      font-style: italic; color: rgba(245,233,204,.7);
+      max-width: 480px; margin: 0 auto 2.5rem;
+      line-height: 1.75;
+    }
+
+    .email-form {
+      display: flex; gap: 0; max-width: 440px; margin: 0 auto;
+      box-shadow: 0 4px 40px rgba(0,0,0,.25);
+    }
+    .email-form input {
+      flex: 1; padding: 15px 20px;
+      font-family: var(--serif); font-size: 15px;
+      background: white; color: var(--ink);
+      border: none; border-radius: 2px 0 0 2px;
+      outline: none;
+    }
+    .email-form input::placeholder { color: var(--ink-4); font-style: italic; }
+    .email-form button {
+      font-family: var(--sans); font-size: 12px; font-weight: 500;
+      letter-spacing: 1px; text-transform: uppercase;
+      background: var(--onyx); color: var(--parchment);
+      border: none; padding: 15px 24px;
+      border-radius: 0 2px 2px 0; cursor: pointer;
+      white-space: nowrap; transition: background .2s;
+    }
+    .email-form button:hover { background: #2d2820; }
+
+    .email-cta small {
+      display: block; margin-top: 14px;
+      font-family: var(--sans); font-size: 11px;
+      color: rgba(245,233,204,.4); letter-spacing: .3px;
+    }
+
+    .email-benefits {
+      display: flex; justify-content: center; gap: 2.5rem;
+      margin-top: 2.5rem; flex-wrap: wrap;
+    }
+    .email-benefit {
+      font-family: var(--sans); font-size: 12px;
+      color: rgba(245,233,204,.55); letter-spacing: .3px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .email-benefit::before { content: '—'; color: rgba(196,151,58,.6); }
+
+    /* ─────────────────────────────────────────
+       BLOG SAYFASI
+    ───────────────────────────────────────── */
+    .page-header {
+      padding: clamp(3rem, 7vw, 6rem) clamp(1.5rem, 5vw, 5rem) 3rem;
+      background: var(--onyx);
+      border-bottom: 1px solid rgba(196,151,58,.15);
+    }
+    .page-header .eyebrow { color: var(--gold-light); margin-bottom: 12px; }
+    .page-header h1 {
+      font-family: var(--display);
+      font-size: clamp(30px, 5vw, 64px);
+      color: var(--parchment); font-weight: 400;
+      line-height: 1.1; letter-spacing: -.5px;
+      max-width: 640px;
+    }
+    .page-header p {
+      font-family: var(--serif); font-size: 17px;
+      font-style: italic; color: rgba(242,234,216,.5);
+      max-width: 480px; margin-top: 1rem; line-height: 1.7;
+    }
+
+    .filter-bar {
+      padding: 1.25rem clamp(1.5rem, 5vw, 5rem);
+      background: var(--parchment-2);
+      border-bottom: 1px solid var(--parchment-3);
+      display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+    }
+    .filter-label {
+      font-family: var(--sans); font-size: 10px;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--ink-4); margin-right: 6px;
+    }
+    .filter-btn {
+      font-family: var(--sans); font-size: 11px; font-weight: 400;
+      letter-spacing: .8px; text-transform: uppercase;
+      background: transparent; color: var(--ink-3);
+      border: 1px solid var(--parchment-3); padding: 6px 14px; border-radius: 1px;
+      cursor: pointer; transition: all .2s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--onyx); color: var(--parchment);
+      border-color: var(--onyx);
+    }
+
+    .article-grid {
+      padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 5rem);
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2px; background: var(--parchment-3);
+    }
+
+    .article-card {
+      background: var(--parchment);
+      padding: 2rem; cursor: pointer;
+      display: flex; flex-direction: column;
+      transition: background .2s;
+      text-decoration: none; color: inherit;
+    }
+    .article-card:hover { background: white; }
+    .article-card:hover .article-title { color: var(--crimson); }
+
+    .article-cat {
+      font-family: var(--sans); font-size: 9px; font-weight: 500;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--crimson); margin-bottom: 14px; display: block;
+    }
+    .article-title {
+      font-family: var(--display);
+      font-size: clamp(18px, 2vw, 22px);
+      font-weight: 400; line-height: 1.25;
+      color: var(--ink); margin-bottom: 12px;
+      transition: color .2s; flex: 1;
+    }
+    .article-excerpt {
+      font-family: var(--serif); font-size: 14px;
+      font-style: italic; color: var(--ink-3);
+      line-height: 1.65; margin-bottom: 1.25rem;
+    }
+    .article-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      font-family: var(--sans); font-size: 11px; color: var(--ink-4);
+    }
+
+    /* ─────────────────────────────────────────
+       PODCAST SAYFASI
+    ───────────────────────────────────────── */
+    .podcast-hero {
+      background: var(--onyx);
+      padding: clamp(3rem, 7vw, 6rem) clamp(1.5rem, 5vw, 5rem);
+      display: grid; grid-template-columns: auto 1fr; gap: 3rem; align-items: center;
+    }
+    .podcast-cover {
+      width: clamp(140px, 18vw, 220px);
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, #1a0d0d 0%, #2d1a08 100%);
+      border: 1px solid rgba(196,151,58,.2);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .podcast-cover-inner {
+      text-align: center;
+    }
+    .podcast-cover-glyph { font-size: 48px; display: block; margin-bottom: 6px; }
+    .podcast-cover-name {
+      font-family: var(--display); font-size: 13px;
+      color: var(--gold-light); letter-spacing: .5px;
+    }
+
+    .podcast-info .eyebrow { color: var(--gold-light); margin-bottom: 12px; }
+    .podcast-info h1 {
+      font-family: var(--display);
+      font-size: clamp(22px, 3.5vw, 40px);
+      color: var(--parchment); font-weight: 400;
+      line-height: 1.2; margin-bottom: 1rem; letter-spacing: -.3px;
+    }
+    .podcast-info p {
+      font-family: var(--serif); font-size: 15px; font-style: italic;
+      color: rgba(242,234,216,.55); line-height: 1.75; max-width: 480px;
+      margin-bottom: 1.5rem;
+    }
+    .podcast-platforms {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .platform-btn {
+      font-family: var(--sans); font-size: 10px; font-weight: 500;
+      letter-spacing: 1px; text-transform: uppercase;
+      background: rgba(242,234,216,.07); color: rgba(242,234,216,.6);
+      border: 1px solid rgba(242,234,216,.12); padding: 7px 14px; border-radius: 2px;
+      cursor: pointer; text-decoration: none; transition: all .2s;
+    }
+    .platform-btn:hover { background: rgba(196,151,58,.15); color: var(--gold-light); border-color: rgba(196,151,58,.3); }
+
+    .episode-list {
+      padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 5rem);
+    }
+
+    .episode-item {
+      display: grid; grid-template-columns: 56px 1fr auto;
+      gap: 1.5rem; align-items: center;
+      padding: 1.5rem 1.25rem; margin-bottom: 4px;
+      background: var(--parchment); border: 1px solid var(--parchment-3);
+      border-radius: 2px; cursor: pointer;
+      transition: background .2s, transform .15s;
+    }
+    .episode-item:hover { background: white; transform: translateX(4px); }
+    .episode-item:hover .ep-title-text { color: var(--crimson); }
+
+    .ep-play {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--onyx); border: 1px solid rgba(242,234,216,.1);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background .2s;
+    }
+    .episode-item:hover .ep-play { background: var(--crimson); }
+    .play-triangle {
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 6px 0 6px 11px;
+      border-color: transparent transparent transparent var(--parchment);
+      margin-left: 2px;
+    }
+
+    .ep-num-label {
+      font-family: var(--sans); font-size: 9px;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--ink-4); margin-bottom: 5px; display: block;
+    }
+    .ep-title-text {
+      font-family: var(--serif);
+      font-size: 17px; font-weight: 400;
+      color: var(--ink); line-height: 1.3; transition: color .2s;
+      margin-bottom: 4px;
+    }
+    .ep-desc {
+      font-family: var(--serif); font-size: 12px;
+      font-style: italic; color: var(--ink-3); line-height: 1.5;
+    }
+    .ep-duration {
+      font-family: var(--sans); font-size: 12px;
+      color: var(--ink-4); white-space: nowrap;
+    }
+
+    /* ─────────────────────────────────────────
+       VAAZLAR SAYFASI
+    ───────────────────────────────────────── */
+    .sermon-grid {
+      padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 5rem);
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .sermon-card {
+      background: var(--parchment);
+      border: 1px solid var(--parchment-3);
+      border-radius: 3px; overflow: hidden;
+      text-decoration: none; color: inherit;
+      display: flex; flex-direction: column;
+      transition: box-shadow .2s, transform .2s;
+      cursor: pointer;
+    }
+    .sermon-card:hover { box-shadow: 0 8px 48px rgba(0,0,0,.1); transform: translateY(-3px); }
+
+    .sermon-thumb {
+      height: 160px;
+      background: linear-gradient(135deg, var(--onyx) 0%, #2d1a0a 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 48px; position: relative;
+    }
+    .sermon-thumb::after {
+      content: '▶';
+      position: absolute; bottom: 12px; right: 12px;
+      font-size: 11px; color: rgba(255,255,255,.5);
+      background: rgba(0,0,0,.4); padding: 4px 8px; border-radius: 2px;
+    }
+    .sermon-body { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+    .sermon-series {
+      font-family: var(--sans); font-size: 9px; font-weight: 500;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 8px; display: block;
+    }
+    .sermon-title {
+      font-family: var(--display); font-size: 17px;
+      color: var(--ink); line-height: 1.3; margin-bottom: 8px;
+      flex: 1;
+    }
+    .sermon-ref {
+      font-family: var(--serif); font-size: 13px;
+      font-style: italic; color: var(--ink-3); margin-bottom: 12px;
+    }
+    .sermon-meta {
+      font-family: var(--sans); font-size: 10px;
+      color: var(--ink-4); letter-spacing: .3px;
+    }
+
+    /* ─────────────────────────────────────────
+       HAKKIMDA SAYFASI
+    ───────────────────────────────────────── */
+    .about-layout {
+      display: grid; grid-template-columns: 1fr 2fr;
+      gap: 0; min-height: 80vh;
+    }
+    .about-sidebar {
+      background: var(--onyx); padding: 4rem 3rem;
+      border-right: 1px solid rgba(196,151,58,.1);
+      position: sticky; top: 58px; align-self: start;
+    }
+    .about-avatar {
+      width: 120px; height: 120px; border-radius: 50%;
+      background: var(--parchment-3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 52px; margin-bottom: 1.5rem;
+      border: 2px solid rgba(196,151,58,.2);
+    }
+    .about-name {
+      font-family: var(--display); font-size: 28px;
+      color: var(--parchment); margin-bottom: 6px; line-height: 1.1;
+    }
+    .about-title-label {
+      font-family: var(--sans); font-size: 11px;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--gold-light); margin-bottom: 2rem; display: block;
+    }
+    .about-links { display: flex; flex-direction: column; gap: 10px; margin-top: 2rem; }
+    .about-link {
+      font-family: var(--sans); font-size: 12px; font-weight: 400;
+      letter-spacing: .5px; color: rgba(242,234,216,.4);
+      text-decoration: none; display: flex; align-items: center; gap: 8px;
+      transition: color .2s;
+    }
+    .about-link::before { content: '→'; color: var(--gold-light); }
+    .about-link:hover { color: var(--parchment); }
+
+    .about-content { padding: clamp(3rem, 6vw, 5rem) clamp(2rem, 5vw, 4rem); }
+    .about-block { margin-bottom: 3rem; }
+    .about-block h2 {
+      font-family: var(--display);
+      font-size: 22px; color: var(--ink);
+      margin-bottom: 1rem; padding-bottom: 10px;
+      border-bottom: 1px solid var(--parchment-3);
+    }
+    .about-block p {
+      font-family: var(--serif); font-size: 16px;
+      color: var(--ink-2); line-height: 1.85; margin-bottom: 1rem;
+    }
+    .about-block p em { color: var(--crimson); font-style: italic; }
+
+    /* ─────────────────────────────────────────
+       GÜNLÜK SAYFASI
+    ───────────────────────────────────────── */
+    .journal-layout {
+      display: grid; grid-template-columns: 1fr 320px;
+      gap: 0; padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 5rem);
+    }
+    .journal-feed { padding-right: 3rem; }
+    .journal-entry {
+      margin-bottom: 3.5rem; padding-bottom: 3.5rem;
+      border-bottom: 1px solid var(--parchment-3);
+    }
+    .journal-entry:last-child { border-bottom: none; }
+    .journal-date {
+      font-family: var(--sans); font-size: 10px;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--ink-4); margin-bottom: 10px; display: block;
+    }
+    .journal-entry h2 {
+      font-family: var(--display); font-size: clamp(20px, 2.5vw, 28px);
+      color: var(--ink); margin-bottom: 1rem;
+      line-height: 1.2; letter-spacing: -.2px;
+    }
+    .journal-entry p {
+      font-family: var(--serif); font-size: 16px;
+      color: var(--ink-2); line-height: 1.85; margin-bottom: 1rem;
+    }
+    .journal-entry blockquote {
+      border-left: 2px solid var(--gold);
+      padding: .5rem 0 .5rem 1.5rem; margin: 1.5rem 0;
+      font-style: italic; color: var(--ink-3);
+    }
+    .journal-entry blockquote cite {
+      display: block; margin-top: 8px;
+      font-family: var(--sans); font-size: 11px;
+      letter-spacing: .5px; color: var(--ink-4); font-style: normal;
+    }
+    .read-more {
+      font-family: var(--sans); font-size: 11px; font-weight: 500;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--crimson); text-decoration: none;
+      border-bottom: 1px solid var(--crimson); padding-bottom: 2px;
+      transition: color .2s; cursor: pointer;
+    }
+    .read-more:hover { color: var(--gold); border-color: var(--gold); }
+
+    .journal-sidebar { padding-left: 3rem; border-left: 1px solid var(--parchment-3); }
+    .sidebar-widget { margin-bottom: 2.5rem; }
+    .sidebar-widget h3 {
+      font-family: var(--display); font-size: 16px;
+      color: var(--ink); margin-bottom: 1rem;
+      padding-bottom: 8px; border-bottom: 1px solid var(--parchment-3);
+    }
+    .sidebar-tag {
+      display: inline-block; margin: 3px;
+      font-family: var(--sans); font-size: 10px; font-weight: 400;
+      letter-spacing: .8px; text-transform: uppercase;
+      background: var(--parchment-2); color: var(--ink-3);
+      border: 1px solid var(--parchment-3); padding: 5px 10px; border-radius: 1px;
+      cursor: pointer; transition: all .2s;
+    }
+    .sidebar-tag:hover { background: var(--onyx); color: var(--parchment); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--onyx);
+      border-top: 1px solid rgba(196,151,58,.15);
+      padding: 3rem clamp(1.5rem, 5vw, 5rem) 2rem;
+    }
+    .footer-inner {
+      display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 3rem; margin-bottom: 2.5rem;
+    }
+    .footer-brand .nav-logo { font-size: 22px; }
+    .footer-brand p {
+      font-family: var(--serif); font-size: 13px; font-style: italic;
+      color: rgba(242,234,216,.35); line-height: 1.7; margin-top: .75rem;
+    }
+    .footer-col h4 {
+      font-family: var(--sans); font-size: 9px; font-weight: 500;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--gold-light); margin-bottom: 14px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .footer-col ul a {
+      font-family: var(--sans); font-size: 13px;
+      color: rgba(242,234,216,.35); text-decoration: none;
+      transition: color .2s; cursor: pointer;
+    }
+    .footer-col ul a:hover { color: rgba(242,234,216,.8); }
+    .footer-bottom {
+      border-top: 1px solid rgba(242,234,216,.06);
+      padding-top: 1.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-bottom p {
+      font-family: var(--sans); font-size: 11px;
+      color: rgba(242,234,216,.2); letter-spacing: .3px;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+      .about-layout { grid-template-columns: 1fr; }
+      .about-sidebar { position: static; }
+      .journal-layout { grid-template-columns: 1fr; }
+      .journal-sidebar { padding-left: 0; border-left: none; border-top: 1px solid var(--parchment-3); padding-top: 2rem; margin-top: 2rem; }
+      .journal-feed { padding-right: 0; }
+      .podcast-hero { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .nav-center, .nav-right { display: none; }
+      .hamburger { display: flex; }
+      .archive-item { grid-template-columns: 48px 1fr; }
+      .archive-read { display: none; }
+      .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
+      .email-form { flex-direction: column; }
+      .email-form input, .email-form button { border-radius: 2px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo" onclick="showPage('home')">
+    <span class="cross-glyph">✝</span> PapazNet
+  </a>
+  <div class="nav-center">
+    <a href="#" onclick="showPage('home')" class="active" data-page="home">Anasayfa</a>
+    <a href="#" onclick="showPage('blog')" data-page="blog">Blog</a>
+    <a href="#" onclick="showPage('podcast')" data-page="podcast">Podcast</a>
+    <a href="#" onclick="showPage('vaazlar')" data-page="vaazlar">Vaazlar</a>
+    <a href="#" onclick="showPage('gunluk')" data-page="gunluk">Günlük</a>
+    <a href="#" onclick="showPage('hakkimda')" data-page="hakkimda">Hakkımda</a>
+  </div>
+  <div class="nav-right">
+    <a href="#" class="nav-subscribe" onclick="showPage('home'); setTimeout(()=>document.getElementById('email-section').scrollIntoView({behavior:'smooth'}),100)">
+      Bültene Kaydol
+    </a>
+  </div>
+  <button class="hamburger" aria-label="Menü" onclick="toggleMobile()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ═══════════════════════════════════════
+     ANASAYFA
+═══════════════════════════════════════ -->
+<div id="page-home" class="page-section active">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-ornament">✝</div>
+    <div class="hero-rule"></div>
+    <div class="hero-eyebrow">Dijital Kürsü · Teoloji Arşivi · Manastır Kütüphanesi</div>
+    <h1>İmanın <em>derinliğine</em><br>inen Türkçe ses</h1>
+    <p class="hero-sub">
+      Kilise babalarından Reformasyon'a, sistematik teolojiden<br>
+      pastoral rehberliğe — birincil kaynaklardan.
+    </p>
+    <div class="hero-actions">
+      <a href="#" class="btn-parchment" onclick="showPage('blog')">Arşivi Keşfet</a>
+      <a href="#" class="btn-ghost" onclick="showPage('podcast')">Podcast'i Dinle</a>
+    </div>
+    <div class="hero-scroll-hint">
+      <div class="scroll-line"></div>
+      <span>Kaydır</span>
+    </div>
+  </header>
+
+  <!-- KOLEKSİYONLAR -->
+  <section class="collections">
+    <div class="collections-header">
+      <div>
+        <span class="eyebrow">Arşiv Koleksiyonları</span>
+        <h2 class="section-title">Ne aramak istiyorsun?</h2>
+      </div>
+      <a href="#" class="see-all" onclick="showPage('blog')">Tümünü Gözat →</a>
+    </div>
+    <div class="collection-grid">
+      <a class="collection-card" href="#" onclick="showPage('blog')">
+        <span class="col-glyph">📜</span>
+        <span class="col-name">Kilise Tarihi</span>
+        <span class="col-count">24 makale</span>
+      </a>
+      <a class="collection-card" href="#" onclick="showPage('blog')">
+        <span class="col-glyph">✝️</span>
+        <span class="col-name">Sistematik Teoloji</span>
+        <span class="col-count">18 makale</span>
+      </a>
+      <a class="collection-card" href="#" onclick="showPage('vaazlar')">
+        <span class="col-glyph">🎙️</span>
+        <span class="col-name">Vaazlar</span>
+        <span class="col-count">36 vaaz · 4 seri</span>
+      </a>
+      <a class="collection-card" href="#" onclick="showPage('podcast')">
+        <span class="col-glyph">🎧</span>
+        <span class="col-name">Podcast Serileri</span>
+        <span class="col-count">10 bölüm</span>
+      </a>
+      <a class="collection-card" href="#" onclick="showPage('blog')">
+        <span class="col-glyph">⚖️</span>
+        <span class="col-name">Reformasyon</span>
+        <span class="col-count">12 makale</span>
+      </a>
+      <a class="collection-card" href="#" onclick="showPage('gunluk')">
+        <span class="col-glyph">🕯️</span>
+        <span class="col-name">Günlük & Yansımalar</span>
+        <span class="col-count">Haftalık yazılar</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- SON İÇERİKLER -->
+  <section class="recent-section">
+    <span class="eyebrow">Son Eklenenler</span>
+    <h2 class="section-title">Arşivden yeni içerikler</h2>
+    <div class="archive-list">
+      <div class="archive-item" onclick="showPage('blog')">
+        <div class="archive-num">01</div>
+        <div>
+          <div class="archive-meta-top">
+            <span class="archive-type type-makale">Makale</span>
+            <span class="archive-date">20 Mayıs 2026</span>
+          </div>
+          <div class="archive-title">Athanasius ve Theosis Doktrini: Birincil Kaynaklardan Bir İnceleme</div>
+          <div class="archive-excerpt">De Incarnatione'dan özgün Yunanca metinlerle kurtarış anlayışını keşfediyoruz.</div>
+        </div>
+        <div class="archive-read">Oku →</div>
+      </div>
+      <div class="archive-item" onclick="showPage('podcast')">
+        <div class="archive-num">02</div>
+        <div>
+          <div class="archive-meta-top">
+            <span class="archive-type type-podcast">Podcast</span>
+            <span class="archive-date">14 Mayıs 2026</span>
+          </div>
+          <div class="archive-title">Diriliş: Tarihsel Bir İddia Olarak Ne Kadar Güçlü?</div>
+          <div class="archive-excerpt">Özgürce Podcast · Bölüm 4 — Tarihsel kanıtları ve karşı argümanları masaya yatırıyoruz.</div>
+        </div>
+        <div class="archive-read">Dinle →</div>
+      </div>
+      <div class="archive-item" onclick="showPage('vaazlar')">
+        <div class="archive-num">03</div>
+        <div>
+          <div class="archive-meta-top">
+            <span class="archive-type type-vaaz">Vaaz</span>
+            <span class="archive-date">11 Mayıs 2026</span>
+          </div>
+          <div class="archive-title">Mezmur 91: Kanat Gölgesinde Sığınak</div>
+          <div class="archive-excerpt">Tanrı'nın koruması ve iman güveni üzerine pazar vaazı.</div>
+        </div>
+        <div class="archive-read">İzle →</div>
+      </div>
+      <div class="archive-item" onclick="showPage('gunluk')">
+        <div class="archive-num">04</div>
+        <div>
+          <div class="archive-meta-top">
+            <span class="archive-type type-gunluk">Günlük</span>
+            <span class="archive-date">8 Mayıs 2026</span>
+          </div>
+          <div class="archive-title">Reformasyon Seminerinden Notlar: 5 Sola'yı Öğretmek</div>
+          <div class="archive-excerpt">İki saatlik seminer sona erdi. Masada kalan sorular ve öğrencilerin gözlerindeki ışık üzerine.</div>
+        </div>
+        <div class="archive-read">Oku →</div>
+      </div>
+      <div class="archive-item" onclick="showPage('blog')">
+        <div class="archive-num">05</div>
+        <div>
+          <div class="archive-meta-top">
+            <span class="archive-type type-makale">Makale</span>
+            <span class="archive-date">2 Mayıs 2026</span>
+          </div>
+          <div class="archive-title">Nicea Sonrası: Teslis Tartışmalarının Pastoral Boyutu</div>
+          <div class="archive-excerpt">381 Konstantinopolis Konsili'nden günümüze — bu tartışma neden hâlâ önemli?</div>
+        </div>
+        <div class="archive-read">Oku →</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTAGRAM -->
+  <section class="instagram-section">
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:0; flex-wrap:wrap; gap:1rem;">
+      <div>
+        <span class="eyebrow">Instagram · @PapazNet</span>
+        <h2 class="section-title">Son paylaşımlar</h2>
+      </div>
+      <a href="https://instagram.com/papaznet" target="_blank" class="see-all">Instagram'da Takip Et →</a>
+    </div>
+    <div class="insta-grid">
+      <div class="insta-card">
+        <div class="insta-placeholder">📜<span>Makale tanıtımı</span></div>
+        <div class="insta-overlay"><p>Athanasius ve theosis: "Tanrı insan oldu ki insan tanrılaşsın" — yeni makalemiz yayında</p></div>
+      </div>
+      <div class="insta-card">
+        <div class="insta-placeholder">🎙️<span>Podcast bölümü</span></div>
+        <div class="insta-overlay"><p>Özgürce Podcast 4. bölüm: Diriliş tarihsel kanıtları üzerine</p></div>
+      </div>
+      <div class="insta-card">
+        <div class="insta-placeholder">📖<span>Alıntı</span></div>
+        <div class="insta-overlay"><p>Luther: "Sola fide — yalnız imanla. Bu tüm Kutsal Yazı'nın özüdür."</p></div>
+      </div>
+      <div class="insta-card">
+        <div class="insta-placeholder">✝️<span>Teoloji notu</span></div>
+        <div class="insta-overlay"><p>5 Sola nedir? Reformasyon'un temel prensipleri karikatüre indirgenirken...</p></div>
+      </div>
+      <div class="insta-card">
+        <div class="insta-placeholder">🕯️<span>Günlük yansıma</span></div>
+        <div class="insta-overlay"><p>Seminer sonrası notlar — öğrencilerin sorduğu en zor soru ne oldu?</p></div>
+      </div>
+      <div class="insta-card">
+        <div class="insta-placeholder">🏛️<span>Tarih</span></div>
+        <div class="insta-overlay"><p>Nicea 325: İznik'ten 1700 yıl sonra, bu tartışma neden hâlâ önemli?</p></div>
+      </div>
+    </div>
+    <div class="insta-connect-banner">
+      <p>
+        <strong>Instagram içeriklerini otomatik güncel tut.</strong><br>
+        Make.com veya Zapier ile Instagram paylaşımlarını sitenle senkronize edebilirsin. Kurulumu birlikte yapalım.
+      </p>
+      <a href="https://make.com" target="_blank" class="btn-insta">Make.com ile Bağla →</a>
+    </div>
+  </section>
+
+  <!-- EMAIL CTA -->
+  <section class="email-cta" id="email-section">
+    <span class="eyebrow">Bülten</span>
+    <h2>Kürsüden<br>doğrudan gelen kutuña</h2>
+    <p>Haftada bir — yeni makaleler, podcast bölümleri, Yunanca-Latince kaynak notları ve pastoral yansımalar.</p>
+    <form class="email-form" onsubmit="handleSubscribe(event)">
+      <input type="email" placeholder="E-posta adresin…" required id="email-input" />
+      <button type="submit">Kaydol</button>
+    </form>
+    <small>Spam yok. İstediğin zaman ayrılabilirsin.</small>
+    <div class="email-benefits">
+      <span class="email-benefit">Haftalık teoloji özeti</span>
+      <span class="email-benefit">Yeni podcast bildirimi</span>
+      <span class="email-benefit">Özel okuyucu içerikleri</span>
+    </div>
+  </section>
+
+</div>
+
+<!-- ═══════════════════════════════════════
+     BLOG
+═══════════════════════════════════════ -->
+<div id="page-blog" class="page-section">
+  <div class="page-header">
+    <span class="eyebrow">Makale Arşivi</span>
+    <h1>Teoloji<br>yazıları</h1>
+    <p>Patristik kaynaklardan Reformasyon belgelerine, sistematik teoloji notlarına — birincil atıflarla.</p>
+  </div>
+  <div class="filter-bar">
+    <span class="filter-label">Filtrele:</span>
+    <button class="filter-btn active" onclick="filterArticles('tumu', this)">Tümü</button>
+    <button class="filter-btn" onclick="filterArticles('kilise-tarihi', this)">Kilise Tarihi</button>
+    <button class="filter-btn" onclick="filterArticles('sistematik', this)">Sistematik Teoloji</button>
+    <button class="filter-btn" onclick="filterArticles('reformasyon', this)">Reformasyon</button>
+    <button class="filter-btn" onclick="filterArticles('pastoral', this)">Pastoral</button>
+    <button class="filter-btn" onclick="filterArticles('ekumenik', this)">Ekümenik</button>
+  </div>
+  <div class="article-grid" id="article-grid">
+    <a class="article-card" href="#" data-cat="kilise-tarihi">
+      <span class="article-cat">Kilise Tarihi</span>
+      <h2 class="article-title">Athanasius ve Theosis Doktrini: Birincil Kaynaklardan Bir İnceleme</h2>
+      <p class="article-excerpt">De Incarnatione'dan özgün Yunanca metinlerle kurtarış anlayışını keşfediyoruz.</p>
+      <div class="article-footer"><span>20 Mayıs 2026</span><span>8 dk okuma</span></div>
+    </a>
+    <a class="article-card" href="#" data-cat="reformasyon">
+      <span class="article-cat">Reformasyon</span>
+      <h2 class="article-title">5 Sola: Gözden Kaçan Reformasyon Sesleri</h2>
+      <p class="article-excerpt">Martin Bucer, Huldrych Zwingli ve diğer gözden kaçan reformatörler üzerine.</p>
+      <div class="article-footer"><span>8 Mayıs 2026</span><span>11 dk okuma</span></div>
+    </a>
+    <a class="article-card" href="#" data-cat="sistematik">
+      <span class="article-cat">Sistematik Teoloji</span>
+      <h2 class="article-title">Teslis Doktrini: Nicea Sonrası Tartışmalar</h2>
+      <p class="article-excerpt">381 Konstantinopolis Konsili ve günümüze yansımaları — pastoral boyutuyla.</p>
+      <div class="article-footer"><span>2 Mayıs 2026</span><span>9 dk okuma</span></div>
+    </a>
+    <a class="article-card" href="#" data-cat="pastoral">
+      <span class="article-cat">Pastoral Rehberlik</span>
+      <h2 class="article-title">Hizmet Tükenmişliğini Önlemek: Derinlik ve Sürdürülebilirlik</h2>
+      <p class="article-excerpt">Tanrı ile ilişkide kalmak — hizmet sürdürülebilirliğinin tek gerçek temeli.</p>
+      <div class="article-footer"><span>24 Nisan 2026</span><span>6 dk okuma</span></div>
+    </a>
+    <a class="article-card" href="#" data-cat="kilise-tarihi">
+      <span class="article-cat">Kilise Tarihi</span>
+      <h2 class="article-title">Augustinus'un Günah Anlayışı: Konfessiones'tan Okumalar</h2>
+      <p class="article-excerpt">Latince orijinal metinden seçilen pasajlarla Augustinus'un özgür irade düşüncesi.</p>
+      <div class="article-footer"><span>15 Nisan 2026</span><span>12 dk okuma</span></div>
+    </a>
+    <a class="article-card" href="#" data-cat="ekumenik">
+      <span class="article-cat">Ekümenik</span>
+      <h2 class="article-title">Ortodoks, Katolik, Protestan: Kurtuluş Anlayışlarında Köprüler</h2>
+      <p class="article-excerpt">Üç geleneğin soteryolojik dilinin karşılaştırmalı okuması.</p>
+      <div class="article-footer"><span>5 Nisan 2026</span><span>14 dk okuma</span></div>
+    </a>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PODCAST
+═══════════════════════════════════════ -->
+<div id="page-podcast" class="page-section">
+  <div class="podcast-hero">
+    <div class="podcast-cover">
+      <div class="podcast-cover-inner">
+        <span class="podcast-cover-glyph">🎙️</span>
+        <span class="podcast-cover-name">Özgürce</span>
+      </div>
+    </div>
+    <div class="podcast-info">
+      <span class="eyebrow">Özgürce Podcast</span>
+      <h1>Hristiyan Olmadan Önce<br>Bilmen Gereken 10 Şey</h1>
+      <p>Dürüst, kişisel ve derinlemesine. Kendi hikâyemden yola çıkarak Hristiyanlığın temel sorularına cevap arıyoruz. 10 bölümlük bir seri.</p>
+      <div class="podcast-platforms">
+        <a href="#" class="platform-btn">Spotify</a>
+        <a href="#" class="platform-btn">Apple Podcasts</a>
+        <a href="#" class="platform-btn">YouTube</a>
+        <a href="#" class="platform-btn">RSS</a>
+      </div>
+    </div>
+  </div>
+  <div class="episode-list">
+    <span class="eyebrow" style="margin-bottom:1.5rem; display:block;">Bölümler</span>
+    <div class="episode-item">
+      <div class="ep-play"><div class="play-triangle"></div></div>
+      <div>
+        <span class="ep-num-label">Bölüm 1</span>
+        <div class="ep-title-text">Tanrı'nın Varlığına Neden İnanayım?</div>
+        <div class="ep-desc">Kozmolojik, teleolojik ve ontolojik argümanları sıradan dille keşfediyoruz.</div>
+      </div>
+      <div class="ep-duration">42 dk</div>
+    </div>
+    <div class="episode-item">
+      <div class="ep-play"><div class="play-triangle"></div></div>
+      <div>
+        <span class="ep-num-label">Bölüm 2</span>
+        <div class="ep-title-text">İncil Güvenilir Bir Kitap mı?</div>
+        <div class="ep-desc">El yazmaları, kanon süreci ve tarihsel güvenilirlik üzerine.</div>
+      </div>
+      <div class="ep-duration">38 dk</div>
+    </div>
+    <div class="episode-item">
+      <div class="ep-play"><div class="play-triangle"></div></div>
+      <div>
+        <span class="ep-num-label">Bölüm 3</span>
+        <div class="ep-title-text">İsa Gerçekten Kim Olduğunu İddia Etti?</div>
+        <div class="ep-desc">C.S. Lewis'in "Deli, Yalancı ya da Rab" argümanı ve ötesi.</div>
+      </div>
+      <div class="ep-duration">45 dk</div>
+    </div>
+    <div class="episode-item">
+      <div class="ep-play"><div class="play-triangle"></div></div>
+      <div>
+        <span class="ep-num-label">Bölüm 4</span>
+        <div class="ep-title-text">Diriliş: Tarihsel Bir İddia Olarak Ne Kadar Güçlü?</div>
+        <div class="ep-desc">N.T. Wright ve Gary Habermas'ın tarihsel argümanlarını inceliyoruz.</div>
+      </div>
+      <div class="ep-duration">51 dk</div>
+    </div>
+    <div class="episode-item" style="opacity:.5;">
+      <div class="ep-play"><div class="play-triangle"></div></div>
+      <div>
+        <span class="ep-num-label">Bölüm 5 · Yakında</span>
+        <div class="ep-title-text">Neden Bu Kadar Çok Acı Var?</div>
+        <div class="ep-desc">Teodise sorunu: iyi ve kudretli Tanrı kötülüğe neden izin veriyor?</div>
+      </div>
+      <div class="ep-duration">— dk</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     VAAZLAR
+═══════════════════════════════════════ -->
+<div id="page-vaazlar" class="page-section">
+  <div class="page-header">
+    <span class="eyebrow">Vaaz Arşivi</span>
+    <h1>Kürsüden<br>söylenmiş sözler</h1>
+    <p>Pazar vaazları, dizi çalışmaları ve özel günler için hazırlanmış mesajlar.</p>
+  </div>
+  <div class="filter-bar">
+    <span class="filter-label">Seri:</span>
+    <button class="filter-btn active">Tümü</button>
+    <button class="filter-btn">Mezmurlar</button>
+    <button class="filter-btn">Yuhanna</button>
+    <button class="filter-btn">Romalılar</button>
+    <button class="filter-btn">Tek Vaazlar</button>
+  </div>
+  <div class="sermon-grid">
+    <div class="sermon-card">
+      <div class="sermon-thumb">🕊️</div>
+      <div class="sermon-body">
+        <span class="sermon-series">Mezmurlar Serisi</span>
+        <div class="sermon-title">Mezmur 91: Kanat Gölgesinde Sığınak</div>
+        <div class="sermon-ref">Mezmur 91:1-16 · Tanrı'nın koruması</div>
+        <div class="sermon-meta">11 Mayıs 2026 · 42 dk</div>
+      </div>
+    </div>
+    <div class="sermon-card">
+      <div class="sermon-thumb">✝️</div>
+      <div class="sermon-body">
+        <span class="sermon-series">Yuhanna Serisi</span>
+        <div class="sermon-title">Işık Karanlığa Girdi: Yuhanna Prologu</div>
+        <div class="sermon-ref">Yuhanna 1:1-14 · Logos teolojisi</div>
+        <div class="sermon-meta">4 Mayıs 2026 · 48 dk</div>
+      </div>
+    </div>
+    <div class="sermon-card">
+      <div class="sermon-thumb">📖</div>
+      <div class="sermon-body">
+        <span class="sermon-series">Romalılar Serisi</span>
+        <div class="sermon-title">Gazap mı, Lütuf mu? Romalılar 1-3'te Günahın Anatomisi</div>
+        <div class="sermon-ref">Romalılar 1:18 – 3:20 · Günah ve kurtuluş</div>
+        <div class="sermon-meta">27 Nisan 2026 · 55 dk</div>
+      </div>
+    </div>
+    <div class="sermon-card">
+      <div class="sermon-thumb">🕯️</div>
+      <div class="sermon-body">
+        <span class="sermon-series">Paskalya</span>
+        <div class="sermon-title">Boş Mezar, Dolu Umut</div>
+        <div class="sermon-ref">1. Korintliler 15:1-20 · Diriliş</div>
+        <div class="sermon-meta">20 Nisan 2026 · 46 dk</div>
+      </div>
+    </div>
+    <div class="sermon-card">
+      <div class="sermon-thumb">⚓</div>
+      <div class="sermon-body">
+        <span class="sermon-series">Tek Vaaz</span>
+        <div class="sermon-title">İbraniler'deki İman Tanıkları: Asırları Aşan Miras</div>
+        <div class="sermon-ref">İbraniler 11 · Geleneğin derinliği</div>
+        <div class="sermon-meta">13 Nisan 2026 · 39 dk</div>
+      </div>
+    </div>
+    <div class="sermon-card">
+      <div class="sermon-thumb">🌿</div>
+      <div class="sermon-body">
+        <span class="sermon-series">Mezmurlar Serisi</span>
+        <div class="sermon-title">Mezmur 23: Çobanın Krallığı</div>
+        <div class="sermon-ref">Mezmur 23:1-6 · Güven ve teslimiyet</div>
+        <div class="sermon-meta">6 Nisan 2026 · 44 dk</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     HAKKIMDA
+═══════════════════════════════════════ -->
+<div id="page-hakkimda" class="page-section">
+  <div class="about-layout">
+    <div class="about-sidebar">
+      <div class="about-avatar">👤</div>
+      <div class="about-name">Özgür</div>
+      <span class="about-title-label">Pastoral Lider · İlahiyat Eğitmeni</span>
+      <p style="font-family:var(--serif); font-size:14px; font-style:italic; color:rgba(242,234,216,.4); line-height:1.75;">
+        "Teoloji soyut bir akademik disiplin değil — yaşayan bir gerçeklikle yüzleşmedir."
+      </p>
+      <div class="about-links">
+        <a href="https://instagram.com/papaznet" target="_blank" class="about-link">@PapazNet Instagram</a>
+        <a href="#" class="about-link" onclick="showPage('podcast')">Özgürce Podcast</a>
+        <a href="#" class="about-link" onclick="document.getElementById('email-section') && showPage('home')">Bültene Kaydol</a>
+      </div>
+    </div>
+    <div class="about-content">
+      <div class="about-block">
+        <h2>Kim olduğum</h2>
+        <p>Pastoral liderlik, ilahiyat eğitimi ve dijital içerik üretiminin kesiştiği bir noktada çalışıyorum. <em>PapazNet</em>'i Türkçe konuşan Hristiyanlar için birincil kaynaklara dayalı, derinlemesine bir teoloji referansına dönüştürme hedefiyle yürütüyorum.</p>
+        <p>Her içerikte birincil kaynaklara — Yunanca ve Latince metinlere — doğrudan atıflar veriyorum. Soyut tartışmalar değil, yaşayan geleneğin somut sesleri.</p>
+      </div>
+      <div class="about-block">
+        <h2>Ne üretiyorum</h2>
+        <p>Reformasyon tarihi, patristik teoloji ve ekümenik perspektifler üzerine özellikle yoğunlaşıyorum. Kilise Tarihi 2 dersleri kapsamında seminer düzeyinde eğitimler veriyorum. Özgürce Podcast ile sesli içeriklere ağırlık vermeye başladım.</p>
+        <p>PapazNet Instagram hesabı ile geniş kitleye ulaşırken, bu arşiv derinliğe ihtiyaç duyanlar için bir <em>manastır kütüphanesi</em> işlevi görüyor.</p>
+      </div>
+      <div class="about-block">
+        <h2>Vizyonum</h2>
+        <p>Türkçe konuşan Hristiyan dünyası için bir referans merkezi oluşturmak. Ortodoks, Katolik ve Protestan geleneklerini adil biçimde temsil eden, gençlerin ve akademisyenlerin eşit ölçüde yararlanabileceği bir arşiv.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     GÜNLÜK
+═══════════════════════════════════════ -->
+<div id="page-gunluk" class="page-section">
+  <div class="page-header">
+    <span class="eyebrow">Günlük & Yansımalar</span>
+    <h1>Yolda<br>yazılmış notlar</h1>
+    <p>Hizmet hayatından, okuma masasından ve sessizlik anlarından.</p>
+  </div>
+  <div class="journal-layout">
+    <div class="journal-feed">
+      <article class="journal-entry">
+        <span class="journal-date">8 Mayıs 2026 · Perşembe</span>
+        <h2>Reformasyon Seminerinden Notlar: 5 Sola'yı Öğretmek</h2>
+        <p>İki saat sona erdi. Öğrenciler dağılmadan önce en az üç kişi "bunu hiç böyle düşünmemiştim" dedi. Tam da peşinde koştuğum his bu.</p>
+        <blockquote>
+          "Sola Scriptura sadece 'yalnız Kutsal Kitap' değil — geleneği reddeden bir tutum değil, geleneği Kutsal Kitap ışığında değerlendiren bir tutum."
+          <cite>— Seminer sırasında söylediğim bir cümle, yazmak istedim</cite>
+        </blockquote>
+        <p>Martin Bucer'i anlattığımda odada bir sessizlik oldu. Çoğu zaman Reformasyon denince akla gelen sadece Luther ve Calvin. Oysa Bucer olmasa Strasbourg reformu olmazdı, belki İngiltere kilisesinin şekli de farklı olurdu.</p>
+        <a class="read-more" href="#">Devamını oku →</a>
+      </article>
+      <article class="journal-entry">
+        <span class="journal-date">1 Mayıs 2026 · Cuma</span>
+        <h2>Pastoral Asistan Toplantısı: Tükenmişlik ve Derinlik</h2>
+        <p>Bugün pastoral asistanlarla tükenmişlik üzerine konuştuk. Odada bir hafiflik vardı — sanki herkes "ben de aynı şeyi hissediyordum" demek için izin bekliyordu.</p>
+        <p>Önemli olan fark şu: tükenmişlik çoğunlukla hizmetin çokluğundan değil, hizmetin temelini besleyen ilişkinin zayıflığından geliyor. Tanrı ile olan ilişki yüzeyselleşince hizmet kabuğa dönüşüyor.</p>
+        <a class="read-more" href="#">Devamını oku →</a>
+      </article>
+      <article class="journal-entry">
+        <span class="journal-date">22 Nisan 2026 · Salı</span>
+        <h2>Athanasius Okurken Kenar Notları</h2>
+        <p>De Incarnatione'nin 54. bölümünü yeniden okudum. "Tanrı insan oldu ki insan tanrılaşsın" — bu cümle Yunancada çok daha güçlü: <em>αὐτὸς γὰρ ἐνηνθρώπησεν, ἵνα ἡμεῖς θεοποιηθῶμεν.</em></p>
+        <blockquote>
+          θεοποιηθῶμεν — "tanrılaştırılalım." Edilgen çatı. Bizim kazandığımız bir şey değil, bize verilen bir şey.
+          <cite>— Kenar notum, Athanasius okurken</cite>
+        </blockquote>
+        <a class="read-more" href="#">Devamını oku →</a>
+      </article>
+    </div>
+    <aside class="journal-sidebar">
+      <div class="sidebar-widget">
+        <h3>Arşiv</h3>
+        <p style="font-family:var(--sans); font-size:13px; color:var(--ink-3); line-height:1.7;">
+          Mayıs 2026 · 3 yazı<br>
+          Nisan 2026 · 4 yazı<br>
+          Mart 2026 · 5 yazı
+        </p>
+      </div>
+      <div class="sidebar-widget">
+        <h3>Etiketler</h3>
+        <div>
+          <span class="sidebar-tag">Reformasyon</span>
+          <span class="sidebar-tag">Athanasius</span>
+          <span class="sidebar-tag">Pastoral</span>
+          <span class="sidebar-tag">Seminer</span>
+          <span class="sidebar-tag">Yunanca</span>
+          <span class="sidebar-tag">Tükenmişlik</span>
+          <span class="sidebar-tag">Mezmurlar</span>
+          <span class="sidebar-tag">Augustinus</span>
+        </div>
+      </div>
+      <div class="sidebar-widget" style="background:var(--crimson); padding:1.5rem; border-radius:3px; margin-top:1rem;">
+        <h3 style="color:var(--parchment); border-bottom-color:rgba(242,234,216,.15);">Bülten</h3>
+        <p style="font-family:var(--serif); font-size:13px; font-style:italic; color:rgba(242,234,216,.65); line-height:1.65; margin-bottom:1rem;">Yeni günlük yazılarını kaçırma.</p>
+        <form onsubmit="handleSubscribe(event)" style="display:flex; flex-direction:column; gap:8px;">
+          <input type="email" placeholder="E-posta…" style="padding:9px 12px; font-family:var(--serif); font-size:13px; border:none; border-radius:2px; outline:none; background:rgba(255,255,255,.9);" />
+          <button type="submit" style="font-family:var(--sans); font-size:11px; font-weight:500; letter-spacing:.8px; text-transform:uppercase; background:var(--onyx); color:var(--parchment); border:none; padding:9px; border-radius:2px; cursor:pointer;">Kaydol</button>
+        </form>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- FOOTER (tüm sayfalarda görünür) -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo" onclick="showPage('home')"><span class="cross-glyph">✝</span> PapazNet</a>
+      <p>Türkçe konuşanlar için dijital kürsü, teoloji arşivi ve manastır kütüphanesi.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Arşiv</h4>
+      <ul>
+        <li><a onclick="showPage('blog')">Makaleler</a></li>
+        <li><a onclick="showPage('podcast')">Podcast</a></li>
+        <li><a onclick="showPage('vaazlar')">Vaazlar</a></li>
+        <li><a onclick="showPage('gunluk')">Günlük</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kategoriler</h4>
+      <ul>
+        <li><a href="#">Kilise Tarihi</a></li>
+        <li><a href="#">Sistematik Teoloji</a></li>
+        <li><a href="#">Reformasyon</a></li>
+        <li><a href="#">Pastoral</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Bağlantı</h4>
+      <ul>
+        <li><a href="https://instagram.com/papaznet" target="_blank">Instagram</a></li>
+        <li><a href="#">Spotify</a></li>
+        <li><a href="#">YouTube</a></li>
+        <li><a onclick="showPage('hakkimda')">Hakkımda</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 PapazNet · Özgür tarafından hazırlanmaktadır</p>
+    <p>Türkçe Teoloji Kaynağı</p>
+  </div>
+</footer>
+
+<script>
+  // ── PAGE NAVIGATION ──
+  function showPage(id) {
+    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById('page-' + id);
+    if (target) { target.classList.add('active'); window.scrollTo({top:0, behavior:'smooth'}); }
+    document.querySelectorAll('.nav-center a').forEach(a => {
+      a.classList.toggle('active', a.dataset.page === id);
+    });
+    closeMobile();
+  }
+
+  // ── MOBILE MENU ──
+  let mobileOpen = false;
+  function toggleMobile() {
+    mobileOpen = !mobileOpen;
+    const nc = document.querySelector('.nav-center');
+    const nr = document.querySelector('.nav-right');
+    if (mobileOpen) {
+      nc.style.cssText = 'display:flex;flex-direction:column;position:fixed;top:58px;left:0;right:0;background:var(--onyx);border-bottom:1px solid rgba(196,151,58,.15);padding:1rem 0;z-index:199;gap:0;';
+      nr.style.cssText = 'display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--onyx);padding:1rem 1.5rem;z-index:199;border-top:1px solid rgba(196,151,58,.1);';
+      nc.querySelectorAll('a').forEach(a => { a.style.cssText = 'height:48px;padding:0 2rem;'; });
+    } else { closeMobile(); }
+  }
+  function closeMobile() {
+    mobileOpen = false;
+    const nc = document.querySelector('.nav-center');
+    const nr = document.querySelector('.nav-right');
+    nc.style.cssText = ''; nr.style.cssText = '';
+    nc.querySelectorAll('a').forEach(a => a.style.cssText = '');
+  }
+
+  // ── ARTICLE FILTER ──
+  function filterArticles(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.article-card').forEach(card => {
+      card.style.display = (cat === 'tumu' || card.dataset.cat === cat) ? 'flex' : 'none';
+    });
+  }
+
+  // ── EMAIL SUBSCRIBE ──
+  function handleSubscribe(e) {
+    e.preventDefault();
+    const input = e.target.querySelector('input[type="email"]');
+    const btn = e.target.querySelector('button');
+    if (input && input.value) {
+      btn.textContent = '✓ Kaydedildi!';
+      btn.style.background = '#2d5a2d';
+      input.value = '';
+      setTimeout(() => { btn.textContent = 'Kaydol'; btn.style.background = ''; }, 3000);
+    }
+  }
+
+  // ── SCROLL ANIMATION ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; } });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.collection-card, .archive-item, .article-card, .episode-item, .sermon-card, .journal-entry').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(12px)';
+    el.style.transition = 'opacity .4s ease, transform .4s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
